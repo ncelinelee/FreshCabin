@@ -4,3 +4,6 @@
 *.keystore
 *.idsig
 .DS_Store
+/.gradle/
+/app/build/
+/local.properties

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public final class MainActivity extends Activity {
+public class MainActivity extends Activity {
     private WebView browser;
 
     @Override
@@ -44,8 +44,12 @@ public final class MainActivity extends Activity {
                 return true;
             }
         });
-        setContentView(browser);
+        showBrowser(browser);
         browser.loadDataWithBaseURL("https://freshcabin.invalid/", html, "text/html", "UTF-8", null);
+    }
+
+    protected void showBrowser(WebView browser) {
+        setContentView(browser);
     }
 
     @Override
