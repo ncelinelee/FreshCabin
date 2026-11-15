@@ -28,6 +28,11 @@ public final class PleosActivity extends MainActivity {
     private Runnable timeout;
 
     @Override
+    protected String prepareHtml(String html) {
+        return html.replace("<body>", "<body class=\"pleos-vehicle\">");
+    }
+
+    @Override
     protected void showBrowser(WebView browser) {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -71,7 +76,7 @@ public final class PleosActivity extends MainActivity {
             }
             HVAC climate = vehicle.getHVAC();
             climate.checkHvacRecirculationCapabilities(
-                    (List<SeatArea> areas) -> {
+                    (config, areas) -> {
                         handler.post(() -> readArea(request, climate, areas));
                         return Unit.INSTANCE;
                     },

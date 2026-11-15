@@ -45,7 +45,11 @@ public class MainActivity extends Activity {
             }
         });
         showBrowser(browser);
-        browser.loadDataWithBaseURL("https://freshcabin.invalid/", html, "text/html", "UTF-8", null);
+        browser.loadDataWithBaseURL("https://freshcabin.invalid/", prepareHtml(html), "text/html", "UTF-8", null);
+    }
+
+    protected String prepareHtml(String html) {
+        return html;
     }
 
     protected void showBrowser(WebView browser) {

@@ -20,11 +20,13 @@ FreshCabin은 저장된 악취 구간에 접근하면 내기순환으로 자동 
 
 `pleos-demo`는 기존 1차 제출용 APK와 별도로, Pleos Vehicle SDK 2.3.2를 사용하는 빌드입니다. Pleos Connect Emulator 2.1.0(API 34)에서 **FreshCabin Pleos → Pleos 공조 조회**를 누릅니다. 앱이 HVAC 순환을 지원하는 영역을 확인하고, 수신한 내기·외기 상태를 차량 화면 상단에 표시합니다. 하단의 기존 가상 주행은 SDK 조회 결과와 독립적입니다.
 
+Pleos Connect Emulator 2.1.0(API 34, 2560×1440), Vehicle Service 2.3.22에서 서명된 APK 설치와 실행을 확인했습니다. 조회 시 SDK가 반환한 내기순환 상태가 화면 상단에 표시됐고, 같은 화면에서 가상 주행의 자동 전환 단계도 열었습니다.
+
 일반 Android 환경이나 권한 및 서비스가 없는 환경에서는 안내를 표시합니다. Pleos 빌드의 매니페스트는 상태 조회용 `CAR_CLIMATE`만 선언합니다. 위치·외부 대기질은 시뮬레이션이며 앱에서 공조를 변경하지 않습니다.
 
 ### Pleos 빌드 및 설치
 
-Android SDK Platform 35와 Build Tools 35.0.0, JDK 17 이상을 준비합니다. Android Studio에서 이 프로젝트를 열거나 명령줄에서 아래와 같이 빌드하고 Pleos Connect AVD에 설치합니다.
+배포된 시연 APK가 있으면 빌드 명령 없이 AVD에 설치할 수 있습니다. 소스에서 빌드할 때는 Android SDK Platform 35와 Build Tools 35.0.0, JDK 17 이상을 준비합니다. Android Studio에서 이 프로젝트를 열거나 명령줄에서 아래와 같이 빌드하고 Pleos Connect AVD에 설치합니다.
 
 ```sh
 ./gradlew :app:assemblePleosDebug
