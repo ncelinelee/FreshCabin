@@ -8,9 +8,10 @@ cd "$(dirname "$0")"
 
 src=app/src/main
 build=build/release
-mkdir -p "$build/classes" "$build/dex" apk
+mkdir -p "$build/classes" "$build/dex" "$build/assets" apk
+cp docs/index.html "$build/assets/index.html"
 "$BUILD_TOOLS/aapt2" link -I "$ANDROID_JAR" --manifest "$src/AndroidManifest.xml" \
-  -A "$src/assets" -o "$build/resources.apk"
+  -A "$build/assets" -o "$build/resources.apk"
 javac --release 8 -classpath "$ANDROID_JAR" -d "$build/classes" \
   "$src/java/io/freshcabin/demo/MainActivity.java"
 jar cf "$build/classes.jar" -C "$build/classes" .

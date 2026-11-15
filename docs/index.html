@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1015">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>FreshCabin · 차량용 주행 프로토타입</title>
 <style>
 :root{color-scheme:dark;--bg:#0a1015;--panel:#121d24;--line:#273940;--mint:#82f3cf;--amber:#ffc184;--muted:#a9bdc5}
@@ -30,7 +32,15 @@ footer{font-size:13px;color:var(--muted);margin-top:12px;display:flex;justify-co
 body.video main{max-width:none;padding:29px 42px}body.video header{margin-bottom:13px}body.video .stops{display:none}body.video .timeline{margin-top:12px}body.video footer{display:none}
 body.video .caption{display:flex;align-items:center;gap:18px;margin-top:11px;padding:11px 15px;background:#e1fff3;color:#142921;border-radius:10px;font-size:18px;font-weight:700;min-height:50px} .caption b{font:700 13px system-ui;color:#1c5446;white-space:nowrap}
 body.video .intro.active{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:100px;background:radial-gradient(ellipse at 78% 65%,#245149,transparent 55%),linear-gradient(130deg,#132421,#0a1218 70%);z-index:10}.intro .badge{margin-top:26px}.intro h2{font:750 108px/1 system-ui;letter-spacing:-.08em;margin:18px 0;color:#eafff8}.intro p{font-size:33px;margin:8px 0;color:#e8f8f3}.intro small{font-size:19px;color:#b6d1c9;margin-top:13px}.intro .eyebrow{font-size:17px}
-@media(max-width:850px){main{padding:20px}.grid{grid-template-columns:1fr}.map{min-height:310px}.headingNote{display:none}h1{font-size:36px}footer{flex-direction:column}}
+@media(max-width:850px){main{padding:24px max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));padding-top:max(24px,env(safe-area-inset-top))}.grid{grid-template-columns:1fr}.map{min-height:310px}.headingNote{display:none}h1{font-size:36px}footer{flex-direction:column}}
+@media(max-width:540px){
+header{margin-bottom:22px}.brand{font-size:24px}.badge{font-size:11px;padding:6px 8px}
+h1{font-size:34px}.map{min-height:270px}.map-label{font-size:12px;left:10px;top:11px}.map-label span{margin-left:4px}
+.legend{left:10px;bottom:11px;font-size:12px;gap:7px;padding:7px}
+.track{grid-template-columns:auto auto minmax(0,1fr);gap:8px}.track .time{grid-column:3;grid-row:1;justify-self:end}
+.track input{grid-column:1/-1;grid-row:2;min-height:32px}.track button,.stops button,.modes button{min-height:44px}
+.stops button{padding:8px}.modes{gap:5px}.modes button{flex:1 1 auto}
+}
 @media(prefers-reduced-motion:no-preference){button{transition:filter .15s}}
 </style>
 </head>
@@ -59,6 +69,17 @@ body.video .intro.active{position:fixed;inset:0;display:flex;flex-direction:colu
 </main>
 <section class="intro" id="intro"><div class="eyebrow" id="introKicker"></div><h2>FreshCabin</h2><p id="introTitle"></p><small id="introLine"></small><div class="badge">MOCK · GPS / 미세먼지 / HVAC</div></section>
 <script>
+if (location.protocol === 'https:' && location.hostname !== 'freshcabin.invalid') {
+  for (const [rel, href] of [['manifest','manifest.webmanifest'],['apple-touch-icon','icons/apple.png']]) {
+    const link = document.createElement('link');
+    link.rel = rel;
+    link.href = href;
+    document.head.append(link);
+  }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline setup failed:', error.message));
+  }
+}
 const el = id => document.getElementById(id);
 const duration = 1740;
 const modes = [

@@ -8,7 +8,7 @@ FreshCabin은 저장된 악취 구간에 접근하면 내기순환으로 자동 
 2. FreshCabin을 열고 **재생**을 누르거나 화면 하단 시점 버튼을 순서대로 누릅니다. ADB를 사용하는 경우 `adb install apk/FreshCabin_FreshCabin_release.apk`로 설치할 수 있습니다.
 3. **출발 → 자동 전환 → 복귀 보류 → 환기 권고 → 외기 복귀**를 확인합니다. 냄새 민감·어린이·반려견 모드는 전환 거리와 권고 시점을 변경합니다.
 
-Android 기기 없이 살펴보려면 [HTML 소스](app/src/main/assets/index.html)를 내려받아 Chrome에서 엽니다. 앱과 브라우저 시연 모두 오프라인으로 동작합니다.
+[모바일 웹 앱](https://ncelinelee.github.io/FreshCabin/)을 iPhone의 Safari 또는 Android의 Chrome에서 열 수도 있습니다. iPhone에서는 Safari 메뉴의 공유 → 홈 화면에 추가를 사용하고, 옵션이 보이면 웹 앱으로 열기를 켭니다. 웹 앱은 처음 온라인으로 연 뒤 오프라인에서도 실행할 수 있습니다. [공통 HTML 소스](docs/index.html)는 브라우저와 APK에서 사용합니다.
 
 ## 구현 범위 및 검증 환경
 
