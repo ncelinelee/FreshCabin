@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreshCabin · 차량용 주행 프로토타입</title>
+<style>
+:root{color-scheme:dark;--bg:#0a1015;--panel:#121d24;--line:#273940;--mint:#82f3cf;--amber:#ffc184;--muted:#a9bdc5}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 0 0,#19322f,transparent 52%),var(--bg);color:#edf7f5;font:16px 'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif}
+main{max-width:1560px;margin:0 auto;padding:30px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:31px}
+.brand{font:700 29px system-ui;letter-spacing:-1.5px}.brand span{color:var(--mint)}
+.badge,.tag{font-weight:700;font-size:13px;padding:7px 12px;border:1px solid #47605f;border-radius:40px;color:var(--mint);white-space:nowrap}
+.badge{background:#182d2c;letter-spacing:.025em}
+.headline{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;gap:16px}.eyebrow{font-size:14px;letter-spacing:.07em;color:var(--mint);font-weight:700}
+h1{font-size:44px;letter-spacing:-.065em;margin:7px 0 1px;line-height:1.1}.headingNote{color:var(--muted);font-size:15px;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:1.72fr 1fr;gap:15px}
+.map,.card{border:1px solid var(--line);border-radius:20px;background:var(--panel);overflow:hidden}
+.map{position:relative;min-width:0;background:#111e24}.map canvas{width:100%;height:100%;display:block;position:absolute}.map-label{position:absolute;z-index:1;top:16px;left:16px;background:#0f191eea;border:1px solid #32464d;color:#edf9f8;border-radius:12px;padding:9px 13px;font-size:14px}.map-label span{color:var(--muted);margin-left:8px}.legend{position:absolute;bottom:16px;left:16px;background:#0c171ce8;border:1px solid #32464d;border-radius:10px;padding:9px 12px;font-size:13px;display:flex;gap:14px}.legend b{color:var(--amber)}.legend span{color:var(--mint)}
+.stack{display:grid;gap:12px}
+.card{padding:16px 18px}.cardTop{display:flex;align-items:center;justify-content:space-between;gap:8px}.label{font-weight:700;color:var(--muted);font-size:15px}.card h2{font-size:32px;letter-spacing:-.055em;margin:6px 0 2px}.card p{margin:4px 0;color:var(--muted);font-size:15px;line-height:1.35}.hvac{background:linear-gradient(115deg,#203936,#132129 80%);min-height:124px}.hvac.recirc{background:linear-gradient(115deg,#443022,#192329 80%)}.recirc h2,.recirc .tag{color:var(--amber)}.recirc .tag{border-color:#785b3b}
+.air{display:flex;justify-content:space-between;gap:10px;align-items:center}.air strong{font-size:28px;white-space:nowrap;letter-spacing:-.06em;color:var(--mint)}.air small{font-size:13px;color:var(--muted);letter-spacing:0}.air .poor{color:var(--amber)}.advice{color:var(--amber)!important;font-weight:700}
+.modes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+button{background:#21323b;border:1px solid #38505a;padding:9px 12px;color:#eef7f7;font:inherit;font-weight:700;cursor:pointer;border-radius:9px;touch-action:manipulation}
+button[aria-pressed=true],button.primary{background:var(--mint);color:#08221b;border-color:var(--mint)}button:hover{filter:brightness(1.13)}button:focus-visible,input:focus-visible{outline:2px solid white;outline-offset:3px}
+.modes button{font-size:13px;padding:7px 8px}.modeNote{min-height:21px}
+.timeline{margin-top:14px;border:1px solid var(--line);border-radius:15px;background:#121d24;padding:12px 16px}.track{display:grid;grid-template-columns:auto auto 1fr auto;gap:10px;align-items:center}.track button{font-size:14px;min-width:71px}.track input{width:100%;margin:0;accent-color:var(--mint)}.time{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.stops{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.stops button{font-size:12px;padding:5px 8px}.stops button[aria-current=true]{border-color:var(--mint);color:var(--mint)}
+footer{font-size:13px;color:var(--muted);margin-top:12px;display:flex;justify-content:space-between;gap:8px}.caption,.intro{display:none}
+body.video main{max-width:none;padding:29px 42px}body.video header{margin-bottom:13px}body.video .stops{display:none}body.video .timeline{margin-top:12px}body.video footer{display:none}
+body.video .caption{display:flex;align-items:center;gap:18px;margin-top:11px;padding:11px 15px;background:#e1fff3;color:#142921;border-radius:10px;font-size:18px;font-weight:700;min-height:50px} .caption b{font:700 13px system-ui;color:#1c5446;white-space:nowrap}
+body.video .intro.active{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:100px;background:radial-gradient(ellipse at 78% 65%,#245149,transparent 55%),linear-gradient(130deg,#132421,#0a1218 70%);z-index:10}.intro .badge{margin-top:26px}.intro h2{font:750 108px/1 system-ui;letter-spacing:-.08em;margin:18px 0;color:#eafff8}.intro p{font-size:33px;margin:8px 0;color:#e8f8f3}.intro small{font-size:19px;color:#b6d1c9;margin-top:13px}.intro .eyebrow{font-size:17px}
+@media(max-width:850px){main{padding:20px}.grid{grid-template-columns:1fr}.map{min-height:310px}.headingNote{display:none}h1{font-size:36px}footer{flex-direction:column}}
+@media(prefers-reduced-motion:no-preference){button{transition:filter .15s}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand"><span>◈</span> FreshCabin</div><div class="badge">MOCK · 주행 시뮬레이션</div></header>
+<section class="headline"><div><div class="eyebrow">울산 · 아산로 → 남구 방향</div><h1>주행 중 공기 관리</h1></div><div class="headingNote">저장된 악취 구간에 맞춰 공기 유입 모드 변경</div></section>
+<div class="grid">
+<section class="map" aria-label="아산로 남구 방향 가상 주행 경로">
+<canvas id="map" aria-hidden="true"></canvas>
+<div class="map-label">가상 GPS 경로 <span id="coords"></span></div>
+<div class="legend"><b>━ 저장 악취 구간</b><span>● 가상 차량 위치</span></div>
+</section>
+<div class="stack">
+<section class="card hvac" id="hvac" aria-live="polite"><div class="cardTop"><span class="label">공기 유입 · HVAC Mock</span><span class="tag" id="phase"></span></div><h2 id="intake"></h2><p id="reason"></p></section>
+<section class="card"><div class="air"><div><div class="label">외부 미세먼지 · Mock</div><p id="airStatus"></p></div><strong id="pm"></strong></div><p id="advice"></p></section>
+<section class="card"><div class="label" id="modeLabel">동승자 모드</div><div class="modes" role="group" aria-labelledby="modeLabel" id="modes"></div><p id="modeNote" class="modeNote"></p></section>
+</div>
+</div>
+<section class="timeline" aria-label="주행 시뮬레이션 조작">
+<div class="track"><button class="primary" id="play">▶ 재생</button><button id="reset">↺ 초기화</button><input id="seek" aria-label="가상 주행 시점" type="range" min="0" max="1740" step="1" value="0"><span id="time" class="time"></span></div>
+<div class="stops" id="stops"></div>
+</section>
+<div class="caption"><b id="chapter"></b><span id="caption"></span></div>
+<footer><span>GPS 좌표 · 대기질 수치 · HVAC 변경은 모두 시뮬레이션입니다.</span><span>재생은 가속 주행 · 슬라이더로 시점 이동 · 모드는 전체 주행에 적용</span></footer>
+</main>
+<section class="intro" id="intro"><div class="eyebrow" id="introKicker"></div><h2>FreshCabin</h2><p id="introTitle"></p><small id="introLine"></small><div class="badge">MOCK · GPS / 미세먼지 / HVAC</div></section>
+<script>
+const el = id => document.getElementById(id);
+const duration = 1740;
+const modes = [
+  {name:'기본', lead:90, advise:1200},
+  {name:'냄새 민감', lead:170, advise:1200},
+  {name:'어린이', lead:130, advise:960},
+  {name:'반려견', lead:130, advise:900}
+];
+const checkpoints = [
+  ['출발',0],['자동 전환',222],['복귀 보류',715],['환기 권고',1440],['외기 복귀',1590]
+];
+// Illustrative coordinates only. Distance is projected along the mock route.
+const route = [[.09,.58,35.5395,129.3728],[.25,.48,35.5374,129.3707],[.40,.45,35.5351,129.3682],[.55,.54,35.5328,129.3658],[.71,.61,35.5304,129.3634],[.91,.48,35.5278,129.3608]];
+const routeLength = 2200;
+const zoneStart = 760, zoneEnd = 1450;
+const cleanAt = 1500, stabilize = 45;
+let seconds = 0, mode = 0, playing = false, lastTick = 0, animation;
+const clock = value => [Math.floor(value/60),Math.floor(value%60)].map(n=>String(n).padStart(2,'0')).join(':');
+function point(distance){
+  const scaled = Math.min(route.length-1,Math.max(0,distance/routeLength*(route.length-1)));
+  const index = Math.min(Math.floor(scaled),route.length-2);
+  return route[index].map((start,j)=>start+(route[index+1][j]-start)*(scaled-index));
+}
+function distanceAt(t){
+  if(t<=570) return t*3.1;
+  if(t<=1460) return 1767+(t-570)*.15;
+  return Math.min(routeLength,1900.5+(t-1460)*1.15);
+}
+function state(t,m){
+  const distance = distanceAt(t);
+  const enteredAt = Math.ceil((zoneStart-modes[m].lead)/3.1);
+  const exitAt = Math.ceil(zoneEnd/3.1);
+  const poor = t>=exitAt && t<cleanAt;
+  const active = t>=enteredAt && t<cleanAt+stabilize;
+  const recommend = active && t-enteredAt>=modes[m].advise;
+  let phase = '감지 대기', reason = '저장 구간 접근 전 · 기존 외기순환 유지';
+  if(active && distance<zoneStart){phase='자동 전환';reason='저장 구간 접근 감지 · 운전자 조작 없이 전환'}
+  else if(active && t<exitAt){phase='구간 통과 중';reason='저장 악취 구간을 지나는 동안 내기순환 유지'}
+  else if(active && poor){phase='복귀 보류';reason='구간 통과 완료 · 외부 미세먼지 상태 확인 중'}
+  else if(active){phase='복귀 조건 확인';reason='외기 상태 개선 · 안정화 45초 확인 중'}
+  else if(t>=cleanAt+stabilize){phase='기존 설정 복귀';reason='구간 이탈과 외기 안정 확인 · 기존 설정 복원'}
+  return {distance,enteredAt,active,poor,recommend,phase,reason};
+}
+const map = el('map');
+function drawMap(distance){
+  const w=map.clientWidth,h=map.clientHeight,dpr=Math.min(devicePixelRatio||1,2);
+  if(!w || !h)return;
+  if(map.width!==Math.round(w*dpr)||map.height!==Math.round(h*dpr)){map.width=Math.round(w*dpr);map.height=Math.round(h*dpr)}
+  const c=map.getContext('2d');
+  c.setTransform(dpr,0,0,dpr,0,0);
+  c.fillStyle='#14242b';c.fillRect(0,0,w,h);
+  function stroke(points,color,width,dash=[]){
+    c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x*w,y*h):c.moveTo(x*w,y*h));
+    c.lineJoin='round';c.lineCap='round';c.strokeStyle=color;c.lineWidth=width;c.setLineDash(dash);c.stroke();c.setLineDash([]);
+  }
+  c.beginPath();c.moveTo(0,h*.72);c.bezierCurveTo(w*.35,h*.48,w*.67,h*.99,w,h*.7);
+  c.lineTo(w,h);c.lineTo(0,h);c.closePath();c.fillStyle='#113b45';c.fill();
+  for(let i=0;i<16;i++)stroke([[i*.08-.14,.04],[i*.078-.10,.36],[i*.06-.05,.67]],'#24373e',1);
+  for(let i=0;i<9;i++)stroke([[0,i*.085],[.48,i*.077+.03],[1,i*.071+.03]],'#263b42',1);
+  stroke([[0,.32],[.25,.26],[.52,.30],[.76,.16],[1,.18]],'#3b5056',5);
+  stroke([[.18,0],[.31,.24],[.36,.49],[.41,.67]],'#394d54',4);
+  stroke([[.83,0],[.77,.25],[.82,.52],[.9,.72]],'#394d54',4);
+  const segment=[point(zoneStart),...route.filter((_,i)=>i*routeLength/5>zoneStart&&i*routeLength/5<zoneEnd),point(zoneEnd)];
+  stroke(route,'#0d1e20',16);stroke(route,'#74d3b9',5);
+  stroke(segment,'#654a33',20);stroke(segment,'#ffc184',6,[9,8]);
+  function label(str,x,y,color,size,weight=600){
+    c.fillStyle=color;c.font=weight+' '+size+'px "Apple SD Gothic Neo",sans-serif';c.fillText(str,x*w,y*h);
+  }
+  label('아산로',.32,.35,'#e6f2f1',17);
+  label('저장 악취 구간',.47,.39,'#ffd2a7',14);
+  label('남구 방향 ↗',.77,.38,'#c9e3de',16);
+  label('태화강',.73,.8,'#8cb7bf',17);
+  const [x,y]=point(distance);
+  c.beginPath();c.arc(x*w,y*h,21,0,Math.PI*2);c.fillStyle='#82f3cf30';c.fill();
+  c.beginPath();c.arc(x*w,y*h,12,0,Math.PI*2);c.fillStyle='#82f3cf';c.fill();
+  c.beginPath();c.moveTo(x*w+5,y*h);c.lineTo(x*w-3,y*h-5);c.lineTo(x*w-3,y*h+5);c.closePath();c.fillStyle='#103028';c.fill();
+}
+function render(){
+  const s=state(seconds,mode),[, ,lat,lon]=point(s.distance);
+  el('coords').textContent=lat.toFixed(4)+'° N · '+lon.toFixed(4)+'° E';
+  el('hvac').classList.toggle('recirc',s.active);
+  el('phase').textContent=s.phase;el('intake').textContent=s.active?'내기순환':'외기순환';el('reason').textContent=s.reason;
+  el('pm').classList.toggle('poor',s.poor);
+  el('pm').innerHTML=(s.poor?'48':'12')+' <small>µg/m³</small>';
+  el('airStatus').textContent='PM2.5 '+(s.poor?'높음':'낮음')+' · 예시 수치';
+  el('advice').classList.toggle('advice',s.recommend);
+  el('advice').textContent=s.recommend?'장시간 내기순환 · 외기 상태 개선 후 환기 권고':s.active?'내기순환 경과 '+clock(seconds-s.enteredAt):'내기순환 시간 모니터링 대기';
+  el('modeNote').textContent='구간 '+modes[mode].lead+'m 전 전환 · 내기 '+modes[mode].advise/60+'분 후 환기 권고';
+  el('seek').value=seconds;el('seek').setAttribute('aria-valuetext',clock(seconds));el('time').textContent=clock(seconds)+' / '+clock(duration);
+  el('play').textContent=playing?'Ⅱ 일시정지':'▶ 재생';
+  [...el('modes').children].forEach((button,index)=>button.setAttribute('aria-pressed',String(mode===index)));
+  [...el('stops').children].forEach((button,index)=>button.setAttribute('aria-current',String(Math.abs(seconds-checkpoints[index][1])<1)));
+  drawMap(s.distance);
+}
+function pause(){playing=false;cancelAnimationFrame(animation)}
+function tick(now){
+  seconds=Math.min(duration,seconds+(now-lastTick)*.036);
+  lastTick=now;
+  if(seconds===duration)pause();
+  render();
+  if(playing)animation=requestAnimationFrame(tick);
+}
+el('play').onclick=()=>{
+  if(playing)pause();
+  else {if(seconds>=duration)seconds=0;playing=true;lastTick=performance.now();animation=requestAnimationFrame(tick)}
+  render();
+};
+el('reset').onclick=()=>{pause();seconds=0;mode=0;render()};
+el('seek').oninput=event=>{pause();seconds=Number(event.target.value);render()};
+modes.forEach(({name},index)=>{
+  const b=document.createElement('button');b.textContent=name;b.onclick=()=>{mode=index;render()};el('modes').append(b);
+});
+checkpoints.forEach(([name,time])=>{
+  const b=document.createElement('button');b.textContent=name;b.onclick=()=>{pause();seconds=time;render()};el('stops').append(b);
+});
+new ResizeObserver(()=>drawMap(state(seconds,mode).distance)).observe(map);
+render();
+
+// Deterministic edit for the companion screen demonstration.
+const edit = [
+  [0,5,0,0,0,'FRESH CABIN / 울산 아산로','악취 구간에 맞춰 공기 유입을 조절합니다','가상 주행으로 보는 차량용 프로토타입'],
+  [5,14,0,215,0,'01 · 접근','울산 아산로에서 남구 방향으로 이동합니다. 기존 설정은 외기순환입니다.'],
+  [14,24,215,420,0,'02 · 자동 전환','저장된 악취 구간에 접근하면 운전자 조작 없이 내기순환으로 바뀝니다.'],
+  [24,35,420,1420,0,'03 · 복귀 보류','구간을 벗어나도 외부 미세먼지가 높은 동안에는 내기순환을 유지합니다.'],
+  [35,42,1420,1470,0,'04 · 환기 권고','장시간 내기순환 시 외기 상태가 좋아진 뒤 환기하도록 안내합니다.'],
+  [42,50,1470,1700,0,'05 · 기존 설정 복귀','외기 상태가 좋아지고 45초간 유지되면 기존 외기순환으로 복귀합니다.'],
+  [50,58,0,1740,0,'06 · 동승자 모드','냄새 민감·어린이·반려견 모드에서 전환 거리와 환기 권고 시점을 조정합니다.'],
+  [58,62,1740,1740,0,'PLEOS APP DEVELOPMENT CHALLENGE','FreshCabin · 1차 제출용 시연','클릭형 HTML에서 같은 주행 흐름을 확인할 수 있습니다.']
+];
+window.freshCabinFrame = t=>{
+  document.body.classList.add('video');
+  const i=edit.findIndex((row,index)=>t<row[1]||index===edit.length-1);
+  const [start,end,from,to,selected,chapter,caption,extra]=edit[i];
+  seconds=i===6 ? 210 : from+(to-from)*(t-start)/(end-start);
+  mode=i===6 ? Math.min(3,1+Math.floor((t-start)/2.7)) : selected;
+  const intro=el('intro');intro.classList.toggle('active',Boolean(extra));
+  el('introKicker').textContent=chapter;el('introTitle').textContent=caption;el('introLine').textContent=extra||'';
+  el('chapter').textContent=chapter;el('caption').textContent=caption;render();
+};
+</script>
+</body>
+</html>
