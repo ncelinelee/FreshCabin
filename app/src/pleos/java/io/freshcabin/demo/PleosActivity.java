@@ -40,9 +40,9 @@ public final class PleosActivity extends MainActivity {
         LinearLayout row = new LinearLayout(this);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setPadding(dp(18), dp(4), dp(12), dp(4));
-        row.setBackgroundColor(Color.rgb(19, 36, 40));
+        row.setBackgroundColor(Color.rgb(44, 44, 48));
         status = new TextView(this);
-        status.setTextColor(Color.rgb(214, 245, 236));
+        status.setTextColor(Color.rgb(255, 219, 186));
         status.setTextSize(15);
         status.setAccessibilityLiveRegion(android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE);
         status.setText("Pleos SDK · 공조 상태 조회 대기 · 아래 주행은 시뮬레이션");
@@ -55,6 +55,7 @@ public final class PleosActivity extends MainActivity {
         layout.addView(row);
         layout.addView(browser, new LinearLayout.LayoutParams(-1, 0, 1));
         setContentView(layout);
+        refresh.post(this::readClimate);
     }
 
     private void readClimate() {

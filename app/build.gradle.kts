@@ -10,8 +10,8 @@ android {
         applicationId = "io.freshcabin.demo"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,7 +24,7 @@ android {
         create("pleos") {
             dimension = "platform"
             applicationIdSuffix = ".pleos"
-            versionNameSuffix = "-pleos-preview"
+            versionNameSuffix = "-pleos"
         }
     }
 
