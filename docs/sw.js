@@ -1,4 +1,4 @@
-const cacheVersion = 'freshcabin-mobile-v2';
+const cacheVersion = 'freshcabin-mobile-v3';
 const shell = ['./', './manifest.webmanifest', './icons/apple.png', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', event => {
